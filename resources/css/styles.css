@@ -35,6 +35,32 @@ body {
     width: 400px !important;
 }
 
+.custom-fixed-spinner {
+   display: none;
+   position: fixed;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   z-index: 1051;
+}
+
+.custom-blur-overlay {
+   display: none;
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100vw;
+   height: 100vh;
+   background: rgba(255, 255, 255, 0.7);
+   backdrop-filter: blur(4px);
+   z-index: 1050;
+}
+
+body.loading {
+   pointer-events: none;
+   user-select: none;
+}
+
 .fs-small {
    font-size: smaller !important;
 }

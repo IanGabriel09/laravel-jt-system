@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
+// Mailers
+use App\Mail\UserAuthorizedMail;
+use App\Mail\TicketResolvedMail;
+
 // Models
 use App\Models\ticket;
 use App\Models\Users_KFCP;
 
 // Libraries
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log; 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+
 
 class AdminController extends Controller
 {
@@ -26,16 +32,21 @@ class AdminController extends Controller
         $userCount = Users_KFCP::count();
         $currentDateTickets = ticket::whereDate('created_at', Carbon::today())->count();
 
-        // with relationship queries
+        // Get the 3 most recent tickets, only if the related user is authorized
         $recentTickets = ticket::with('user')
+            ->whereHas('user', fn($query) => $query->whereNotNull('is_authorized'))
             ->orderBy('created_at', 'desc')
             ->take(3)
             ->get();
+
+        // Get pending tickets by department, only if the related user is authorized
         $pendingTicketsByDepartment = ticket::where('status', 'pending')
+            ->whereHas('user', fn($query) => $query->whereNotNull('is_authorized'))
             ->with('user')
             ->get()
             ->groupBy(fn($ticket) => $ticket->user->department ?? 'Unknown')
             ->map(fn($group) => $group->count());
+
 
         // Average time calculation
         $ticketTimeDiff = [];
@@ -88,7 +99,6 @@ class AdminController extends Controller
     // ----------------------- //
     // ---Ticket Management ---//
     // ----------------------- //
-
     public function ticketManagement()
     {
         $users = Users_KFCP::all();
@@ -97,7 +107,7 @@ class AdminController extends Controller
             ->orderBy('department', 'asc')
             ->get();
         $pendingTickets = ticket::where('status', 'pending')
-            ->with('user')
+            ->whereHas('user', fn($query) => $query->whereNotNull('is_authorized'))
             ->orderBy('created_at', 'desc')
             ->paginate(10);
         
@@ -141,6 +151,26 @@ class AdminController extends Controller
         }
     }
 
+    public function resolveTicket($id)
+    {
+        $ticket = ticket::findOrFail($id);
+    
+        if ($ticket->status !== 'resolved') {
+            $ticket->status = 'resolved';
+            $ticket->save();
+    
+            $user = $ticket->user; // Access related user via the relationship
+    
+            if ($user) {
+                Mail::to($user->email)->send(new TicketResolvedMail($user, $ticket));
+            }
+    
+            return redirect()->back()->with('success', 'Ticket marked as resolved.');
+        }
+    
+        return redirect()->back()->with('error', 'Ticket is already resolved.');
+    }
+
     // ----------------------- //
     // ----User Management ----//
     // ----------------------- //
@@ -165,6 +195,8 @@ class AdminController extends Controller
         $user->is_authorized = 'authorized';
         $user->save();
 
+        Mail::to($user->email)->send(new UserAuthorizedMail($user));
+
         return redirect()->route('userManagement')->with('success', 'User authorized successfully');
     }
 
@@ -184,5 +216,40 @@ class AdminController extends Controller
     
         return redirect()->route('userManagement')->with('success', 'User unauthorized successfully.');
     }
+
+    // ----------------------- //
+    // ------History page -----//
+    // ----------------------- //
+
+    public function fetchHistory()
+    {
+        // Retrieve all tickets, most recent first, paginated (10 per page)
+        $tickets = ticket::orderBy('created_at', 'desc')
+            ->whereHas('user', fn($query) => $query->whereNotNull('is_authorized'))
+            ->paginate(10); // 10 tickets per page
+    
+        // Return to the view with the paginated tickets
+        return view('admin.admin_history', compact('tickets'));
+    }
+
+    public function searchByDateAdmin(Request $request)
+    {
+        $filter_date = $request->date;
+    
+        $query = ticket::query()
+            ->whereHas('user', fn($query) => $query->whereNotNull('is_authorized')); // Apply whereHas here
+    
+        if (!empty($filter_date)) {
+            $query->whereDate('created_at', $filter_date);
+        }
+    
+        $tickets = $query->orderBy('created_at', 'desc')->paginate(10);
+        $tickets->appends(['date' => $filter_date]); // Keeps the filter during pagination
+    
+        return view('admin.admin_history', compact('tickets', 'filter_date'));
+    }
+    
+
+    
     
 }

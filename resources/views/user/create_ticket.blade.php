@@ -57,6 +57,10 @@
 
                 <!-- Submit -->
                 <button type="submit" class="btn btn-primary btn-lg mt-3">Submit Ticket</button>
+                <button class="d-none btn btn-primary btn-lg mt-3" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span role="status">Loading...</span>
+                </button>
             </form>
         </div>
     </div>
@@ -119,6 +123,15 @@
 
 @section('scripts')
     <script>
+        $(document).ready(function () {
+            $('form').on('submit', function () {
+                // Add d-none to the submit button
+                $(this).find('button[type="submit"]').addClass('d-none');
+
+                // Remove d-none from the loading spinner button
+                $(this).find('button[type="button"]').removeClass('d-none');
+            });
+        });
     </script>
 @endsection
 

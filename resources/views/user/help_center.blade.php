@@ -51,6 +51,20 @@
                 </div>
             </div>
         </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFour">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    <p class="lead fw-bold m-0">4.) Will my existing Job Tickets reflect when my account is unauthorized?</p>
+                </button>
+            </h2>
+            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    No. If by chance your account has Job tickets and has lost authorization access in the website. Then your tickets won't reflect and show in the server. But rest assured that your tickets are not deleted, it's just not showing. Only authorized accounts has the ability to reflect in our server side. Reach out to MIS if ever your account has lost its authorization access.
+                </div>
+            </div>
+        </div>
+        
     </div>
     
 

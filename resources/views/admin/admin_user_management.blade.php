@@ -1,8 +1,27 @@
 @extends('_layouts.app')
 
 @section('content')
+
+<!-- Fixed Spinner with Loading Text -->
+<div class="custom-blur-overlay" id="blurOverlay"></div>
+<div class="custom-fixed-spinner" id="loadingSpinner">
+    <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 <div class="container mt-5 pt-4">
     <h2 class="mb-4">User Management</h2>
+
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show rounded-0 left-border-success" role="alert">
+            {{ session('success') }}
+        </div>
+    @elseif(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show rounded-0 left-border-danger" role="alert">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <!-- Unauthorized Users Table -->
     <div class="card mb-5 shadow-sm">
@@ -33,13 +52,13 @@
                             <td>{{ $user->position }}</td>
                             <td>{{ $user->created_at->format('Y-m-d') }}</td>
                             <td>
-                                <form action="{{ route('userAuthorize', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Authorize this user?')">
+                                <form action="{{ route('userAuthorize', $user->id) }}" method="POST" class="d-inline authorize-form">
                                     @csrf
                                     @method('PATCH')
                                     <button class="btn btn-sm btn-success">Authorize</button>
                                 </form>
 
-                                <form action="{{ route('userDelete', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this user?')">
+                                <form action="{{ route('userDelete', $user->id) }}" method="POST" class="d-inline delete-form">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-sm btn-danger">Remove</button>
@@ -97,7 +116,7 @@
                             </td>
                             <td>{{ $user->created_at->format('Y-m-d') }}</td>
                             <td>
-                                <form action="{{ route('userUnauthorize', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Mark this user as unauthorized?')">
+                                <form action="{{ route('userUnauthorize', $user->id) }}" method="POST" class="d-inline unauthorize-form">
                                     @csrf
                                     @method('PATCH')
                                     <button class="btn btn-sm btn-danger">Remove</button>
@@ -119,4 +138,42 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+    <script>
+        $(document).ready(function () {
+            $('form.authorize-form').on('submit', function (e) {
+                if (!confirm('Authorize this user?')) {
+                    e.preventDefault();
+                    return;
+                }
+                showLoader();
+            });
+
+            $('form.delete-form').on('submit', function (e) {
+                if (!confirm('Delete this user?')) {
+                    e.preventDefault();
+                    return;
+                }
+                showLoader();
+            });
+
+            $('form.unauthorize-form').on('submit', function (e) {
+                if (!confirm('Mark this user as unauthorized?')) {
+                    e.preventDefault();
+                    return;
+                }
+                showLoader();
+            });
+
+            function showLoader() {
+                $('body').addClass('loading');
+                $('#loadingSpinner').show();
+                $('#blurOverlay').show();
+            }
+        });
+
+
+    </script>
 @endsection

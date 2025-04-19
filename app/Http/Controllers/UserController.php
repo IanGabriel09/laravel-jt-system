@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+// Mailers
+use App\Mail\TicketCreatedMail;
+
 // Models
 use App\Models\ticket;
 use App\Models\Users_KFCP;
@@ -10,6 +13,7 @@ use App\Models\Users_KFCP;
 // Libraries
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log; 
 
@@ -105,7 +109,6 @@ class UserController extends Controller
         ]);
     
         $ticket_id = 'JT-' . substr(Str::uuid()->toString(), 0, 8);
-
         $user_id = session('loginId');
     
         try {
@@ -121,6 +124,9 @@ class UserController extends Controller
     
             Log::info("Ticket created: " . $ticket_id);
     
+            // Send the mail to the admin
+            Mail::to('iangabrieldurian@gmail.com')->send(new TicketCreatedMail($ticket));
+    
             return redirect()->back()->with('success', 'Your Job ticket has been successfully submitted.');
         } catch (\Exception $e) {
             Log::error("Ticket creation failed: " . $e->getMessage());
@@ -128,6 +134,7 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'There was an error submitting your ticket. Please try again later.');
         }
     }
+    
 
     // ----------------------- //
     // ------History page -----//

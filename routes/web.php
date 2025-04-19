@@ -38,16 +38,18 @@ Route::middleware(['admin'])->group(function() {
     // Admin Ticket Management
     Route::get('/admin/create-ticket', [AdminController::class, 'ticketManagement'])->name('adminCreateTicket');
     Route::post('/admin/create-ticket', [AdminController::class, 'submitTicket'])->name('submitTicketAdmin');
+    Route::patch('/admin/{id}/resolve-ticket/', [AdminController::class, 'resolveTicket'])->name('resolveTicketAdmin');
 
-    // Admin User Management
+    // Admin User Managements
     Route::get('/admin/user-management', [AdminController::class, 'fetchUserData'])->name('userManagement');
     Route::patch('/admin/{id}/authorize', [AdminController::class, 'authorizeUser'])->name('userAuthorize');
     Route::delete('/admin/{id}', [AdminController::class, 'deleteUser'])->name('userDelete');
     Route::patch('/admin/{id}/unauthorize', [AdminController::class, 'unauthorizeUser'])->name('userUnauthorize');
 
-    Route::get('/admin/history', function() {
-        return view('admin.admin_history');
-    })->name('adminHistory');
+    // Admin History
+    Route::get('/admin/ticket-history', [AdminController::class, 'fetchHistory'])->name('adminHistory');
+    Route::get('/admin/ticket-history/search', [AdminController::class, 'searchByDateAdmin'])->name('searchByDateAdmin');
+
 
 
 });

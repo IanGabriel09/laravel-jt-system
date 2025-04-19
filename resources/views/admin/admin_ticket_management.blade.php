@@ -1,9 +1,16 @@
 @extends('_layouts.app')
 
 @section('content')
+
+<!-- Fixed Spinner with Loading Text -->
+<div class="custom-blur-overlay" id="blurOverlay"></div>
+<div class="custom-fixed-spinner" id="loadingSpinner">
+    <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 <div class="container mt-5">
-
-
     {{-- Ticket Form --}}
     <div class="row">
         <div class="col-lg-9 col-md-12">
@@ -30,13 +37,13 @@
                     <strong>Ticket Details</strong>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('submitTicketAdmin') }}" method="POST">
+                    <form action="{{ route('submitTicketAdmin') }}" method="POST" class="submit-form">
                         @csrf
                         <div class="row">
                             {{-- Assigned User (Optional) --}}
                             <div class="col-lg-6 col-md-6 col-sm-12 mb-3">
                                 <label for="" class="form-label">Assign to:</label>
-                                <select class="form-select" id="assigned_to" name="assigned_to">
+                                <select class="form-select" id="assigned_to" name="assigned_to" required>
                                     <option value="" selected disabled>Select user</option>
                                     @forelse ($users as $user)
                                         <option value="{{ $user->id_number }}">{{ $user->fName }} {{ $user->lName }}</option>
@@ -49,8 +56,8 @@
                             {{-- Priority --}}
                             <div class="col-lg-6 col-md-6 col-sm-12 mb-3">
                                 <label for="" class="form-label">Priority</label>
-                                <select class="form-select" id="priority" name="priority">
-                                    <option selected disabled>Select priority</option>
+                                <select class="form-select" id="priority" name="priority" required>
+                                    <option value="" selected disabled>Select priority</option>
                                     <option value="low">Low</option>
                                     <option value="medium">Medium</option>
                                     <option value="high">High</option>
@@ -61,19 +68,19 @@
                             {{-- Location --}}
                             <div class="col-lg-6 col-md-6 col-sm-12 mb-3">
                                 <label for="" class="form-label">Location</label>
-                                <input type="text" id="location" name="location" class="form-control" placeholder="Location of Job request">
+                                <input type="text" id="location" name="location" class="form-control" placeholder="Location of Job request" required>
                             </div>
         
                             {{-- Subject --}}
                             <div class="col-lg-6 col-md-6 col-sm-12 mb-3">
                                 <label for="" class="form-label">Subject</label>
-                                <input type="text" class="form-control" id="ticket_subj" name="ticket_subj" placeholder="Enter ticket subject">
+                                <input type="text" class="form-control" id="ticket_subj" name="ticket_subj" placeholder="Enter ticket subject" required>
                             </div>
         
                             {{-- Description --}}
                             <div class="mb-3">
                                 <label for="" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" name="description" rows="4" placeholder="Describe the issue or request..."></textarea>
+                                <textarea class="form-control" id="description" name="description" rows="4" placeholder="Describe the issue or request..." required></textarea>
                             </div>
         
         
@@ -106,6 +113,7 @@
                             <th>Location</th>
                             <th>Status</th>
                             <th>Last Updated</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -125,6 +133,14 @@
                                     @endif
                                 </td>
                                 <td>{{ $pendingTicket->updated_at->diffForHumans() }}</td>
+                                <td>
+                                    <form action="{{ route('resolveTicketAdmin', $pendingTicket->id) }}" method="POST" class="resolve-form">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-sm btn-outline-success">Mark Resolved</button>
+                                    </form>
+                                </td>
+                                
                             </tr>
                         @empty
                             <tr>
@@ -150,6 +166,28 @@
 
 @section('scripts')
 <script>
-    console.log(@json($departments));
+    $(document).ready(function () {
+        $('form.resolve-form').on('submit', function (e) {
+            if (!confirm('Resolve this ticket?')) {
+                e.preventDefault();
+                return;
+            }
+            showLoader();
+        });
+
+        $('form.submit-form"').on('submit', function (e) {
+            if (!confirm('Add this Ticket?')) {
+                e.preventDefault();
+                return;
+            }
+            showLoader();
+        });
+
+        function showLoader() {
+            $('body').addClass('loading');
+            $('#loadingSpinner').show();
+            $('#blurOverlay').show();
+        }
+    });
 </script>
 @endsection
