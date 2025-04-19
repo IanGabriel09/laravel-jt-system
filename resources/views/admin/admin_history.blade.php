@@ -10,16 +10,33 @@
         </div>
 
         <div class="col-lg-6 col-md-12">
-            <div class="d-flex justify-content-lg-end mb-3">
+            <div class="d-lg-flex d-md-flex d-sm-block justify-content-lg-end mb-3">
                 <!-- Change the form method to GET -->
                 <form action="{{ route('searchByDateAdmin') }}" method="GET">
-                    <label for="date">Sort by Date</label>
-                    <div class="input-group mb-3">
-                        <input type="date" id="date" name="date" class="form-control" value="{{ $filter_date ?? '' }}">
-                        <button class="btn btn-primary z-0" type="submit">Search</button>
+                    <div class="row">
+                        <div class="mb-3 col-lg-6 col-md-6 col-sm-12">
+                            <label for="ticket_id">Search by Ticket ID</label>
+                            <input type="text" id="ticket_id" name="ticket_id" class="form-control" 
+                                   value="{{ $ticket_id ?? '' }}" placeholder="Enter Ticket ID">
+                        </div>
+                    
+                        <div class="mb-3 col-lg-6 col-md-6 col-sm-12">
+                            <label for="date">Sort by Date</label>
+                            <div class="input-group">
+                                <input type="date" id="date" name="date" class="form-control" value="{{ $filter_date ?? '' }}">
+                                <button class="btn btn-primary z-0" type="submit">Search</button>
+                            </div>
+                        </div>
                     </div>
+
                 </form>
+                <div class="">
+                    <a href="{{ route('adminHistory') }}" class="btn btn-outline-secondary ms-2 rounded-0 p-1">Reset</a>
+                </div>
+
             </div>
+
+
         </div>
     </div>
 

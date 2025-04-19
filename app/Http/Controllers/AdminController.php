@@ -235,19 +235,30 @@ class AdminController extends Controller
     public function searchByDateAdmin(Request $request)
     {
         $filter_date = $request->date;
+        $ticket_id = $request->ticket_id;
     
         $query = ticket::query()
-            ->whereHas('user', fn($query) => $query->whereNotNull('is_authorized')); // Apply whereHas here
+            ->whereHas('user', fn($query) => $query->whereNotNull('is_authorized'));
     
         if (!empty($filter_date)) {
             $query->whereDate('created_at', $filter_date);
         }
     
-        $tickets = $query->orderBy('created_at', 'desc')->paginate(10);
-        $tickets->appends(['date' => $filter_date]); // Keeps the filter during pagination
+        if (!empty($ticket_id)) {
+            $query->where('ticket_id', 'like', '%' . $ticket_id . '%');
+        }
     
-        return view('admin.admin_history', compact('tickets', 'filter_date'));
+        $tickets = $query->orderBy('created_at', 'desc')->paginate(10);
+    
+        // Keeps the filters during pagination
+        $tickets->appends([
+            'date' => $filter_date,
+            'ticket_id' => $ticket_id
+        ]);
+    
+        return view('admin.admin_history', compact('tickets', 'filter_date', 'ticket_id'));
     }
+    
     
 
     
