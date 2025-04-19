@@ -16,8 +16,7 @@
                     <div class="row">
                         <div class="mb-3 col-lg-6 col-md-6 col-sm-12">
                             <label for="ticket_id">Search by Ticket ID</label>
-                            <input type="text" id="ticket_id" name="ticket_id" class="form-control" 
-                                   value="{{ $ticket_id ?? '' }}" placeholder="Enter Ticket ID">
+                            <input type="text" id="ticket_id" name="ticket_id" class="form-control" value="{{ $ticket_id ?? '' }}" placeholder="Enter Ticket ID">
                         </div>
                     
                         <div class="mb-3 col-lg-6 col-md-6 col-sm-12">
