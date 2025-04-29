@@ -1,10 +1,13 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-📘 Laravel MIS JT System
-A Laravel-powered IT ticketing system designed to streamline internal support and task management within an organization. Originally developed as a personal project to practice and showcase Laravel's capabilities, this system has evolved into a comprehensive solution for managing IT-related requests.​
+📘 Laravel Pizzahouse
+A Laravel-powered simple Pizza ordering website. This is only a pet project to test my capabalities in creating websites using Laravel. Mainly inspired by Net Ninja's Pizzahouse Laravel series in youtube​, but with added email notifications both client and sercer side as well as price calculations.
+
+Net Ninja Pizzahouse series:
+https://www.youtube.com/watch?v=zckH4xalOns&list=PL4cUxeGkcC9hL6aCFKyagrT1RCfVN4w2Q
+
 
 Important notes:
-
 * Clone the repository and navigate into the project directory  
   (Use `git clone <repository-url>` and `cd <project-folder>` to get started)
 
