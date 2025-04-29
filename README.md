@@ -1,6 +1,6 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-📘 Laravel MIS JT System. A Laravel-powered IT ticketing system designed to streamline internal support and task management within an organization. Originally developed as a personal project to practice and showcase Laravel's capabilities, this system has evolved into a comprehensive solution for managing IT-related requests.​
+📘 Laravel MIS JT System. A Laravel-powered IT ticketing system designed to streamline internal support and task management within an organization. Originally developed as a personal project to practice and showcase Laravel's capabilities.
 
 Important notes:
 * Clone the repository and navigate into the project directory  
